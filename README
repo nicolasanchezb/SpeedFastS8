@@ -8,134 +8,81 @@
 
 ## Descripción
 
-SpeedFast es una aplicación de escritorio desarrollada en Java que permite gestionar pedidos, repartidores y entregas mediante una interfaz gráfica Swing y una base de datos MySQL.
+SpeedFast es una aplicación de escritorio desarrollada en Java que permite gestionar pedidos, repartidores y entregas mediante una interfaz Swing y una base de datos MySQL.
 
-En esta semana se implementaron operaciones CRUD completas: crear, leer, actualizar y eliminar registros. Los cambios se almacenan en la base de datos `speedfast_db` y permanecen disponibles después de cerrar y volver a abrir la aplicación.
-
-## Objetivo
-
-Integrar la programación orientada a objetos, la interfaz gráfica y la persistencia de datos mediante JDBC, utilizando consultas parametrizadas, validaciones y manejo de excepciones.
+Esta versión completa las operaciones CRUD (crear, leer, actualizar y eliminar) de las tres entidades. Los cambios se guardan en `speedfast_db` y permanecen disponibles después de cerrar y volver a abrir la aplicación.
 
 ## Funcionalidades
 
-### Gestión de repartidores
+| Entidad | Funciones |
+|---|---|
+| Repartidores | Registrar nombre, listar en tabla, seleccionar, editar y eliminar |
+| Pedidos | Registrar dirección, distancia, tipo y estado; listar, editar y eliminar |
+| Entregas | Asociar pedido y repartidor con fecha y hora; listar, editar y eliminar |
 
-- Registrar repartidores mediante su nombre.
-- Listar repartidores en una tabla.
-- Seleccionar un repartidor para editar su nombre.
-- Eliminar repartidores, previa confirmación.
-- Validar que el nombre sea obligatorio y no supere los 100 caracteres.
+### Pedidos
 
-### Gestión de pedidos
+- Tipos permitidos: `COMIDA`, `ENCOMIENDA` y `EXPRESS`.
+- Estados permitidos: `PENDIENTE`, `EN_REPARTO` y `ENTREGADO`.
+- ID generado por MySQL al registrar desde la nueva pantalla.
+- Distancia en kilómetros conservada del modelo de semanas anteriores.
 
-- Registrar pedidos con dirección, distancia, tipo y estado.
-- Generar automáticamente el ID desde MySQL.
-- Listar pedidos en una tabla.
-- Editar dirección, distancia, tipo y estado.
-- Eliminar pedidos, previa confirmación.
-- Validar dirección obligatoria y distancia numérica mayor que cero.
+### Entregas
 
-**Tipos permitidos:**
+- Selección de pedidos y repartidores mediante combos cargados desde MySQL.
+- Texto legible en los combos, manteniendo internamente los objetos y sus IDs.
+- Fecha con formato `AAAA-MM-DD` y hora con formato `HH:mm:ss`.
+- Filtros por pedido y repartidor, utilizables por separado o combinados.
+- Opción **Todos** para recuperar el listado completo.
+- El registro de una entrega conserva el estado actual del pedido. El estado se modifica desde la gestión de pedidos.
 
-- `COMIDA`
-- `ENCOMIENDA`
-- `EXPRESS`
+### Interfaz
 
-**Estados permitidos:**
-
-- `PENDIENTE`
-- `EN_REPARTO`
-- `ENTREGADO`
-
-### Gestión de entregas
-
-- Registrar entregas asociando un pedido y un repartidor.
-- Seleccionar entidades mediante combos cargados desde MySQL.
-- Registrar fecha y hora.
-- Listar entregas en una tabla.
-- Editar pedido, repartidor, fecha y hora.
-- Eliminar entregas, previa confirmación.
-- Filtrar entregas por pedido o repartidor.
-- Combinar ambos filtros.
-- Recuperar el listado completo mediante la opción **Todos**.
-
-El registro de una entrega conserva el estado actual del pedido. El estado se modifica desde la pantalla de gestión de pedidos.
-
-### Interfaz gráfica
-
-- Menú principal con acceso a las tres pantallas.
-- Tablas de solo lectura.
-- Selección de filas para cargar los formularios.
-- Actualización automática de las tablas después de cada operación exitosa.
-- Actualización de los combos de entregas cuando cambian pedidos o repartidores.
+- Menú principal con acceso a las tres pantallas de gestión.
+- Tablas de solo lectura; selección de filas para editar o eliminar.
+- Actualización de las tablas después de cada operación exitosa.
+- Actualización de los combos y del listado de entregas cuando cambian pedidos o repartidores.
 - Mensajes de éxito, validación y error mediante `JOptionPane`.
+- Confirmación antes de eliminar registros.
 - Operaciones JDBC en segundo plano mediante `SwingWorker`.
 
-## Tecnologías utilizadas
+## Tecnologías
 
-| Tecnología | Uso |
-|---|---|
-| Java | Desarrollo de la aplicación y lógica orientada a objetos |
-| Swing | Interfaz gráfica |
-| JDBC | Comunicación con la base de datos |
-| MySQL | Persistencia de registros |
-| MySQL Connector/J | Controlador JDBC de MySQL |
-| IntelliJ IDEA | Entorno de desarrollo |
-| `java.time` | Manejo de fechas y horas |
+- Java y programación orientada a objetos.
+- Swing: `JFrame`, `JPanel`, `JTable`, `JTextField`, `JComboBox` y `JButton`.
+- JDBC: `Connection`, `PreparedStatement` y `ResultSet`.
+- MySQL y MySQL Connector/J.
+- IntelliJ IDEA.
+- `java.time` para fechas y horas.
 
-## Organización del proyecto
+## Organización del código
+
+La aplicación utilizada en esta entrega se organiza en las siguientes capas:
 
 | Paquete | Clases principales | Responsabilidad |
 |---|---|---|
-| `main` | `Main` | Iniciar la aplicación |
-| `model` | `Pedido`, sus subclases, `EstadoPedido`, `Repartidor`, `Entrega` | Representar las entidades |
-| `dao` | `ConexionBD`, `PedidoDAO`, `RepartidorDAO`, `EntregaDAO` | Conexión y persistencia |
-| `ui` | `VentanaPrincipal`, `VentanaGestionPedidos`, `VentanaRepartidores`, `VentanaAsignarEntrega` | Formularios, tablas y eventos |
+| `main` | `Main` | Iniciar la interfaz en el hilo de Swing |
+| `model` | `Pedido`, `PedidoComida`, `PedidoEncomienda`, `PedidoExpress`, `EstadoPedido`, `Repartidor`, `Entrega` | Representar las entidades y sus datos |
+| `dao` | `ConexionBD`, `PedidoDAO`, `RepartidorDAO`, `EntregaDAO` | Conectar con MySQL y ejecutar operaciones de persistencia |
+| `ui` | `VentanaPrincipal`, `VentanaGestionPedidos`, `VentanaRepartidores`, `VentanaAsignarEntrega` | Formularios, tablas, eventos y validaciones |
 
-Las clases de simulación de semanas anteriores pueden permanecer en el proyecto. El menú de esta versión utiliza las pantallas CRUD y no inicia la simulación automática de entregas.
+Las clases de simulación de semanas anteriores pueden permanecer en el proyecto. El menú de la semana 8 utiliza las pantallas CRUD y no inicia la simulación automática de entregas.
 
-## Programación orientada a objetos
+### Programación orientada a objetos
 
-La clase abstracta `Pedido` contiene los atributos y comportamientos comunes de los pedidos.
+`Pedido` mantiene su carácter abstracto. Al leer datos desde MySQL, `PedidoDAO` reconstruye la subclase correspondiente al tipo registrado. `Entrega` relaciona un objeto `Pedido` con un objeto `Repartidor` y almacena su ID y fecha/hora.
 
-Sus subclases son:
+### Acceso a datos
 
-- `PedidoComida`
-- `PedidoEncomienda`
-- `PedidoExpress`
+Cada DAO implementa `create()`, `readAll()`, `update()` y `delete()`. También se conservan métodos anteriores como `guardar()` y `listarTodos()` para compatibilidad.
 
-Al consultar MySQL, `PedidoDAO` reconstruye la subclase correspondiente al tipo almacenado.
-
-La clase `Entrega` relaciona un objeto `Pedido` con un objeto `Repartidor` y conserva el ID de la entrega y su fecha/hora.
-
-## Operaciones DAO
-
-Cada entidad cuenta con un DAO que implementa:
-
-| Método | Operación |
-|---|---|
-| `create()` | Crear un registro |
-| `readAll()` | Consultar todos los registros |
-| `update()` | Actualizar un registro |
-| `delete()` | Eliminar un registro |
-
-También se conservan métodos anteriores como `guardar()` y `listarTodos()` para mantener la compatibilidad con otras clases del proyecto.
-
-### Acceso seguro y cierre de recursos
-
-- Uso de `PreparedStatement` con parámetros `?`.
-- Uso de `ResultSet` para recuperar los resultados.
-- Cierre automático de conexiones, sentencias y resultados mediante `try-with-resources`.
-- Propagación de excepciones SQL hacia la interfaz.
-- Contraseña obtenida desde una variable de entorno.
-
-Las entradas del usuario no se concatenan directamente en las sentencias SQL.
+Las sentencias usan parámetros `?` y `PreparedStatement`, evitando concatenar las entradas del usuario en el SQL. Los recursos se cierran mediante `try-with-resources`. Las excepciones se propagan a la interfaz para informar el resultado de las operaciones.
 
 ## Base de datos
 
-**Nombre:** `speedfast_db`
+**Nombre:** `speedfast_db`.
 
-La aplicación utiliza las tablas existentes de la semana anterior, cuyos nombres están en singular:
+La implementación utiliza las tablas existentes de la semana 7, cuyos nombres están en singular:
 
 | Tabla | Columnas |
 |---|---|
@@ -143,11 +90,11 @@ La aplicación utiliza las tablas existentes de la semana anterior, cuyos nombre
 | `pedido` | `id`, `direccion`, `distancia_km`, `tipo`, `estado` |
 | `entrega` | `id`, `id_pedido`, `id_repartidor`, `fecha`, `hora` |
 
-Se conservó el campo `distancia_km` del proyecto anterior. La dirección admite 150 caracteres y los campos `tipo` y `estado` son `VARCHAR`, cuyos valores se validan desde la aplicación.
+Respecto del esquema de referencia de la actividad, se conservó `distancia_km`, la dirección admite 150 caracteres y `tipo`/`estado` son campos `VARCHAR`. La aplicación restringe sus valores a las opciones exigidas.
 
-### Script para una instalación nueva
+### Creación en una instalación nueva
 
-Este script reproduce la estructura utilizada por los DAO. Si las tablas ya existen, verifica su estructura antes de ejecutarlo.
+El siguiente SQL reproduce la estructura utilizada por los DAO. Ejecútalo en una instalación nueva; si ya tienes las tablas, verifica su estructura y conserva los datos existentes.
 
 ```sql
 CREATE DATABASE IF NOT EXISTS speedfast_db
@@ -174,36 +121,24 @@ CREATE TABLE entrega (
     id_repartidor INT NOT NULL,
     fecha DATE NOT NULL,
     hora TIME NOT NULL,
-
     CONSTRAINT fk_entrega_pedido
-        FOREIGN KEY (id_pedido)
-        REFERENCES pedido(id),
-
+        FOREIGN KEY (id_pedido) REFERENCES pedido(id),
     CONSTRAINT fk_entrega_repartidor
-        FOREIGN KEY (id_repartidor)
-        REFERENCES repartidor(id)
+        FOREIGN KEY (id_repartidor) REFERENCES repartidor(id)
 ) ENGINE = InnoDB;
 ```
 
-### Integridad referencial
-
-Las claves foráneas impiden eliminar un pedido o repartidor que tenga entregas asociadas.
-
-La interfaz informa esta situación mediante un mensaje. Para eliminar registros de prueba relacionados, primero se debe eliminar la entrega.
+Las claves foráneas impiden eliminar un pedido o repartidor con entregas asociadas. La aplicación informa esta restricción; para eliminar registros de prueba relacionados, elimina primero la entrega.
 
 ## Configuración y ejecución
 
 ### 1. Preparar MySQL
 
-Inicia el servicio MySQL y comprueba que exista la base de datos con sus tablas.
-
-Puedes verificarlo desde MySQL Workbench:
+Inicia el servicio MySQL y confirma que exista `speedfast_db` con las tablas indicadas. Puedes comprobarlas desde MySQL Workbench:
 
 ```sql
 USE speedfast_db;
-
 SHOW TABLES;
-
 DESCRIBE repartidor;
 DESCRIBE pedido;
 DESCRIBE entrega;
@@ -211,156 +146,89 @@ DESCRIBE entrega;
 
 ### 2. Agregar el conector JDBC
 
-En IntelliJ IDEA:
+En IntelliJ IDEA, abre **File → Project Structure → Modules → Dependencies** y agrega el JAR de MySQL Connector/J mediante **+ → JARs or Directories**. Configura su alcance como **Compile**.
 
-1. Abre **File → Project Structure**.
-2. Selecciona **Modules → Dependencies**.
-3. Pulsa **+ → JARs or Directories**.
-4. Selecciona el JAR de MySQL Connector/J.
-5. Configura su alcance como **Compile**.
-6. Pulsa **Apply → OK**.
-
-El entorno de desarrollo utiliza `mysql-connector-j-26.7.0.jar`.
-
-La configuración de ejecución debe utilizar el módulo que contiene esta dependencia.
+El entorno de desarrollo utiliza `mysql-connector-j-26.7.0.jar`. La configuración de ejecución debe utilizar el módulo que contiene esta dependencia.
 
 ### 3. Configurar la conexión
 
-La clase `ConexionBD` utiliza:
+La clase `dao.ConexionBD` utiliza:
 
 | Parámetro | Valor |
 |---|---|
 | URL | `jdbc:mysql://localhost:3306/speedfast_db` |
 | Usuario | `root` |
 | Contraseña | Variable de entorno `SPEEDFAST_DB_PASSWORD` |
-| Método de conexión | `ConexionBD.conectar()` |
+| Método | `ConexionBD.conectar()` |
 
-Configura `SPEEDFAST_DB_PASSWORD` en las variables de entorno de la configuración de ejecución de IntelliJ.
-
-Si la variable se configura desde el sistema operativo, reinicia IntelliJ para que pueda leerla.
+Configura `SPEEDFAST_DB_PASSWORD` en las variables de entorno de la configuración de ejecución de IntelliJ, con la contraseña del usuario MySQL. Si se configura como variable del sistema operativo, reinicia IntelliJ para que pueda leerla.
 
 La contraseña no debe escribirse en el código ni publicarse en el repositorio.
 
-### 4. Ejecutar la aplicación
+### 4. Iniciar la aplicación
 
-Ejecuta la clase:
+Ejecuta `main.Main` desde IntelliJ. La declaración de paquete de `Main.java` es `package main;` y el campo **Main class** de la configuración debe indicar `main.Main`.
 
-```text
-main.Main
-```
-
-La clase `Main` declara:
-
-```java
-package main;
-```
-
-En **Run → Edit Configurations**, el campo **Main class** debe indicar `main.Main`.
-
-El menú principal permite acceder a:
+El menú ofrece:
 
 1. **Gestionar pedidos**.
 2. **Gestionar repartidores**.
 3. **Gestionar entregas**.
 
-El inicio de la aplicación no vuelve a insertar los pedidos de ejemplo eliminados.
+El inicio ya no vuelve a insertar los pedidos de ejemplo eliminados.
 
-## Uso de la aplicación
+## Uso básico
 
-### Registrar
+1. Registra un repartidor y un pedido.
+2. Abre la gestión de entregas y selecciona ambos desde los combos.
+3. Ingresa la fecha y hora y pulsa **Registrar**.
+4. Para editar, selecciona una fila, modifica sus datos y pulsa **Guardar cambios**.
+5. Para eliminar, selecciona una fila y confirma la operación.
+6. Utiliza **Nuevo** para limpiar el formulario y **Actualizar** para consultar nuevamente MySQL.
+7. En entregas, utiliza los filtros para consultar un pedido o repartidor específico.
 
-Completa los campos del formulario y pulsa **Registrar**. La tabla se actualiza después de guardar correctamente en MySQL.
+## Validaciones y manejo de errores
 
-### Editar
-
-Selecciona una fila de la tabla, modifica sus datos y pulsa **Guardar cambios**.
-
-### Eliminar
-
-Selecciona una fila, pulsa **Eliminar** y confirma la operación.
-
-### Limpiar el formulario
-
-Pulsa **Nuevo** para quitar la selección y preparar un nuevo registro.
-
-### Actualizar
-
-Pulsa **Actualizar** para consultar nuevamente los datos almacenados en MySQL.
-
-### Filtrar entregas
-
-Selecciona un pedido o repartidor en los combos de filtro. Puedes combinar ambos criterios.
-
-Selecciona **Todos** en ambos combos para mostrar nuevamente todas las entregas.
-
-## Validaciones implementadas
-
-- Nombre del repartidor obligatorio y de hasta 100 caracteres.
-- Dirección obligatoria y de hasta 150 caracteres.
+- Nombre del repartidor obligatorio, con un máximo de 100 caracteres.
+- Dirección obligatoria, con un máximo de 150 caracteres.
 - Distancia numérica, finita y mayor que cero.
-- Selección de tipo y estado válidos.
-- Selección obligatoria de pedido y repartidor para una entrega.
-- Fecha válida con formato `AAAA-MM-DD`.
-- Hora válida con formato `HH:mm:ss`.
+- Tipo y estado seleccionados desde opciones válidas.
+- Pedido y repartidor obligatorios para registrar una entrega.
+- Fecha y hora válidas, con análisis estricto de sus formatos.
 - Año de la entrega entre 1000 y 9999.
-- Selección de un registro antes de editar o eliminar.
-- Confirmación antes de eliminar.
+- Selección obligatoria de una fila antes de editar o eliminar.
+- Mensajes claros ante errores de conexión, referencias inexistentes o eliminación impedida por relaciones.
 
-## Manejo de errores
+## Verificación manual
 
-La aplicación muestra mensajes cuando:
+Durante el desarrollo se reportaron satisfactorias las siguientes pruebas manuales:
 
-- No se puede establecer la conexión con MySQL.
-- Falta configurar la contraseña.
-- Los datos ingresados no son válidos.
-- El pedido o repartidor relacionado ya no existe.
-- Se intenta eliminar un registro con entregas asociadas.
-- Una operación no consigue actualizar o eliminar el registro seleccionado.
-
-## Pruebas manuales realizadas
-
-Durante el desarrollo se comprobaron manualmente las siguientes funciones:
-
-| Prueba | Resultado |
+| Prueba | Resultado esperado y reportado |
 |---|---|
-| Registrar, editar y eliminar repartidores | Funcionamiento confirmado |
-| Validar nombre vacío | Funcionamiento confirmado |
-| Registrar, editar y eliminar pedidos | Funcionamiento confirmado |
-| Validar dirección y distancia | Funcionamiento confirmado |
-| Conservar cambios al reiniciar | Funcionamiento confirmado |
-| Registrar, editar y eliminar entregas | Funcionamiento confirmado |
-| Rechazar una fecha imposible | Funcionamiento confirmado |
-| Impedir eliminaciones con entregas asociadas | Funcionamiento confirmado |
-| Filtrar entregas por pedido o repartidor | Funcionamiento confirmado |
-| Recuperar el listado con la opción Todos | Funcionamiento confirmado |
-| Seleccionar correctamente una fila filtrada | Funcionamiento confirmado |
+| Repartidores | Registro, edición, eliminación y validación de nombre vacío |
+| Pedidos | Registro, edición de tipo/estado, eliminación y validación de entradas |
+| Persistencia | Conservación de cambios después de reiniciar la aplicación |
+| Entregas | Registro, edición, eliminación y validación de fecha imposible |
+| Integridad referencial | Bloqueo al eliminar pedidos o repartidores con entregas asociadas |
+| Filtros de entregas | Consulta por pedido, por repartidor y recuperación del listado completo |
+| Selección filtrada | Carga del registro correcto al seleccionar una fila filtrada |
 
-Estas comprobaciones corresponden a pruebas manuales, no a una suite automatizada.
+Estas comprobaciones son manuales; no corresponden a una suite automatizada de pruebas.
 
 ## Solución de problemas
 
-| Mensaje o problema | Acción |
+| Mensaje o síntoma | Revisión |
 |---|---|
-| `Could not find or load main class` | Verificar el paquete y ejecutar `main.Main` |
-| `No suitable driver found` | Agregar MySQL Connector/J al módulo y al classpath de ejecución |
-| `Falta configurar SPEEDFAST_DB_PASSWORD` | Configurar la variable de entorno |
-| `Access denied` | Revisar usuario, contraseña y permisos |
-| Error de conexión | Comprobar que MySQL esté iniciado y revisar host y puerto |
-| Tabla inexistente | Verificar la base y los nombres de tablas en singular |
-| Eliminación impedida | Revisar las entregas asociadas |
+| `Could not find or load main class` | Verificar `package main;` y ejecutar `main.Main` con el módulo correcto |
+| `No suitable driver found` | Agregar el JAR de MySQL Connector/J a las dependencias y al classpath de ejecución |
+| `Falta configurar SPEEDFAST_DB_PASSWORD` | Configurar la variable en la ejecución o reiniciar IntelliJ si se agregó al sistema |
+| `Access denied` | Revisar usuario, contraseña y permisos de MySQL |
+| Error de conexión con el servidor | Comprobar que MySQL esté iniciado y que host/puerto coincidan con la URL |
+| Tabla inexistente | Verificar `speedfast_db` y los nombres en singular utilizados por los DAO |
+| Eliminación impedida | Revisar las entregas asociadas al pedido o repartidor |
 
-## Alcance de la actividad
+## Alcance de la entrega
 
-Se implementó:
+La versión implementa CRUD de repartidores, pedidos y entregas, integración con Swing, consultas parametrizadas, cierre de recursos y filtros de entregas. Los filtros de pedidos por estado o tipo, opcionales en el enunciado, no se incorporaron.
 
-- CRUD completo de repartidores, pedidos y entregas.
-- Integración de los DAO con Swing.
-- Consultas parametrizadas mediante JDBC.
-- Validaciones y manejo de excepciones.
-- Cierre de recursos.
-- Actualización de tablas y combos.
-- Filtros de entregas por pedido y repartidor.
-
-Los filtros de pedidos por estado o tipo son opcionales en el enunciado y no se incorporaron en esta versión.
-
-Se implementó `RepartidorDAO`, ya que el caso y el esquema proporcionado corresponden a repartidores. La mención de `ClienteDAO` en el paso 2 no corresponde a una entidad del esquema entregado.
+Se utiliza `RepartidorDAO` porque el caso y el esquema describen repartidores; la mención de `ClienteDAO` en el paso 2 del enunciado no corresponde a una entidad del esquema proporcionado.
